@@ -1,0 +1,195 @@
+/* Estilização total */
+html {
+  scroll-behavior: smooth;
+}
+.container_conteudo_total {
+  display: flex;
+  flex-direction: column;
+  
+}
+
+/* Estilização primeira tela */
+.container_conteudo_primeira_tela {
+  width: 100%;
+  height: 110vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3em;
+  margin-bottom: 4rem;
+
+  background-image: url(../../assets/background-tela-1.png);
+  background-size: cover;
+
+  & h1 {
+    margin: 0;
+    font-size: 4em;
+  }
+  & p {
+    width: 40%;
+    margin: 0;
+    font-size: 1.2em;
+    color: rgb(0, 0, 0, 0.6);
+    text-align: center;
+  }
+}
+
+.container_botoes_primeira_tela {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 50%;
+  margin-top: 3em;
+
+  & button {
+    font-size: 1em;
+    width: 25%;
+    height: 45px;
+    border: none;
+    cursor: pointer;
+    border-radius: 20px;
+    transition: transform 0.4s ease;
+  }
+
+  & .botao_rotas {
+    color: white;
+    background-color: #007aff;
+  }
+  & .botao_rotas:hover {
+    transform: scale(1.05);
+    transition: transform 0.6s ease;
+  }
+
+  & .botao_saiba_mais {
+    color: #007aff;
+    background-color: rgba(0, 122, 255, 0.2);
+  }
+  & .botao_saiba_mais:hover {
+    transform: scale(1.05);
+    transition: transform 0.4s ease;
+  }
+}
+
+/* Estilização segunda tela */
+.container_segunda_tela {
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  align-items: center;
+  justify-content: center;
+}
+
+.container_info_sefunda_tela {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  width: 40%;
+
+  & h2 {
+    margin: 0;
+    font-size: 2em;
+  }
+  & p {
+    width: 80%;
+    margin: 0;
+    font-size: 1.2em;
+    color: rgb(0, 0, 0, 0.6);
+  }
+  & .botao_sobre_projeto {
+    font-size: 1em;
+    width: 25%;
+    height: 45px;
+    border: none;
+    cursor: pointer;
+    border-radius: 20px;
+    transition: transform 0.4s ease;
+    color: #007aff;
+    background-color: rgba(0, 122, 255, 0.2);
+  }
+  & .botao_sobre_projeto:hover {
+    transform: scale(1.05);
+    transition: transform 0.4s ease;
+  }
+}
+
+.imagem_segunda_tela {
+  width: 50%;
+  border-radius: 15px;
+}
+
+
+/* Estilização terceira tela */
+.container_terceira_tela{
+    height: 100vh;
+    background-color: #F9FAFB;
+    display: flex;
+    flex-direction: column;
+    gap: 6rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.container_info_terceira_tela{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+
+    & h2 {
+        margin: 0;
+        font-size: 2em;
+      }
+      & p {
+        width: 60%;
+        margin: 0;
+        font-size: 1.2em;
+        color: rgb(0, 0, 0, 0.6);
+        text-align: center;
+      }
+    & .botao_como_funciona{
+        font-size: 1em;
+        width: 20%;
+        height: 40px;
+        border: none;
+        cursor: pointer;
+        border-radius: 20px;
+        transition: transform 0.4s ease;
+        color: #10B981;
+        background-color: rgba(16, 185, 129, 0.1);
+    }
+    & .botao_como_funciona:hover {
+        transform: scale(1.05);
+        transition: transform 0.4s ease;
+    }
+}
+
+.container_cards_terceira_tela{
+    display: flex;
+    flex-direction: row;
+    gap: 3rem;
+    width: 90%;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.container_card_terceira_tela{
+    width: 25%;
+    padding: 20px;
+    height: 100%;
+    background-color: #FFFFFF;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.4s ease;
+    
+}
+.container_card_terceira_tela:hover{
+    transform: scale(1.05);
+    transition: transform 0.4s ease;
+}
+
+

@@ -1,10 +1,12 @@
 import './App.css';
-import Topbar from "./components/Topbar/Topbar";
+import Rotas from './routes/Rotas';
+import "@fontsource/poppins";
+
 
 function App() {
-
-    <Topbar></Topbar>
-    
-};
+    return (
+      <Rotas/>
+    );
+}
 
 export default App;
