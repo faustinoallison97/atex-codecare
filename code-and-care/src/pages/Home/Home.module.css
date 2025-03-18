@@ -73,12 +73,13 @@ html {
 
 /* Estilização segunda tela */
 .container_segunda_tela {
-  height: 100vh;
+  height: auto;
   display: flex;
   flex-direction: row;
   gap: 30px;
   align-items: center;
   justify-content: center;
+  margin: 100px 0;
 }
 
 .container_info_sefunda_tela {
@@ -99,7 +100,7 @@ html {
   }
   & .botao_sobre_projeto {
     font-size: 1em;
-    width: 25%;
+    width: 30%;
     height: 45px;
     border: none;
     cursor: pointer;
@@ -122,13 +123,13 @@ html {
 
 /* Estilização terceira tela */
 .container_terceira_tela{
-    height: 100vh;
     background-color: #F9FAFB;
     display: flex;
     flex-direction: column;
     gap: 6rem;
     align-items: center;
     justify-content: center;
+    margin: 100px 0 0 0;
 }
 
 .container_info_terceira_tela{
@@ -136,6 +137,7 @@ html {
     flex-direction: column;
     align-items: center;
     gap: 40px;
+    margin-top: 50px;
 
     & h2 {
         margin: 0;
@@ -168,10 +170,12 @@ html {
 .container_cards_terceira_tela{
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     gap: 3rem;
     width: 90%;
     align-items: center;
     justify-content: center;
+    margin-bottom: 30px;
 
 }
 
@@ -193,3 +197,12 @@ html {
 }
 
 
+
+/* Respomnsividade */
+
+@media screen and (max-width: 1200px) {
+    .container_segunda_tela{
+        flex-direction: column;
+    }
+    
+}
