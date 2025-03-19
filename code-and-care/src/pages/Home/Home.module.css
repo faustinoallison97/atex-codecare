@@ -172,7 +172,6 @@ html {
     width: 90%;
     align-items: center;
     justify-content: center;
-
 }
 
 .container_card_terceira_tela{
@@ -192,4 +191,51 @@ html {
     transition: transform 0.4s ease;
 }
 
+/* Tamanho dos icones */
+#icone_rotas, #icone_pessoas, #icone_coracao{
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 1.5rem;
+}
 
+/* Configuração de cores individual de cada icone */
+#icone_rotas{
+  background-color: #ebf2fe;
+  color: #3d83f6;
+}
+
+#icone_pessoas{
+  background-color: #e7f8f2;
+  color: #10b981;
+}
+
+#icone_coracao{
+  background-color: #ebf2fe;
+  color: #3d83f6;
+}
+
+/* Ajustar os links de redirecionamento */
+
+#terceiro_link_redirecionar, #segundo_link_redirecionar, #primeiro_link_redirecionar{
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  &:hover{
+    text-decoration: underline;
+  }
+}
+
+/* Configuração de cores individual de cada link de redirecionamento */
+#terceiro_link_redirecionar{
+  color: #3d83f6;
+}
+
+#segundo_link_redirecionar{
+  color: #10b981;
+}
+
+#primeiro_link_redirecionar{
+  color: #3d83f6;
+}
