@@ -1,7 +1,9 @@
 import style from "./Home.module.css";
 import ImgSegundaTela from "../../assets/img-tela-2.avif";
+import Topbar from "../../components/Topbar/Topbar";
 function Home() {
   return (
+    <><Topbar/>
     <div className={style.container_conteudo_total}>
       <div id="sessao1" className={style.container_conteudo_primeira_tela}>
         <h1>Vamos mudar vidas juntos!</h1>
@@ -77,6 +79,7 @@ function Home() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

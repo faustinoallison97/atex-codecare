@@ -1,9 +1,17 @@
 import React from 'react';
-
+import style from './Topbar.module.css';
+import logo from '../../assets/LogoCode&CareBranco.png'
 function Topbar(){
 
     return(
-        <h1>Ola mundo</h1>
+        <nav className={style.containernav}>
+            <img src={logo} alt="" />
+            <ul>
+                <li>Rotas</li>
+                <li>Informações</li>
+                <li>Contato</li>
+            </ul>
+        </nav>
     );
    
 };
