@@ -4,9 +4,14 @@ import { FiMapPin } from "react-icons/fi";
 import { LuUsers } from "react-icons/lu";
 import { FaRegHeart } from "react-icons/fa6";
 import { MdOutlineArrowRightAlt } from "react-icons/md";
+import Topbar from "../../components/Topbar/Topbar";
+import Route from"../../pages/Route/Route";
 
 function Home() {
   return (
+    <>
+    <Topbar/>
+    <Route/>
     <div className={style.container_conteudo_total}>
       <div id="sessao1" className={style.container_conteudo_primeira_tela}>
         <h1>Vamos mudar vidas juntos!</h1>
@@ -88,6 +93,7 @@ function Home() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 
