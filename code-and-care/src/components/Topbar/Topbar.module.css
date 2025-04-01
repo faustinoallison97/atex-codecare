@@ -1,0 +1,34 @@
+.containernav {
+    background-color: #007AFF;
+    align-items: center;
+    color: white;
+    height: 75px;
+    display: flex;
+    justify-content: center;
+    cursor: default;
+}
+
+nav ul{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    list-style: none;
+    gap: 70px;
+}
+
+nav img{
+    width: 175px;
+    margin-right: 15em;
+}
+
+nav ul li{
+    transition: all ease-in-out 0.3s;
+}
+
+nav ul li:hover{
+    font-size: 1.07rem;
+    transition: all ease-in-out 0.3s;
+    cursor: pointer;
+    color: #ededed;
+}
+
