@@ -1,6 +1,6 @@
 import mbxGeocoding from '@mapbox/mapbox-sdk/services/geocoding';
 
-const MAPBOX_TOKEN = 'SUA_CHAVE_MAPBOX';
+const MAPBOX_TOKEN = 'pk.eyJ1IjoiaGVyb2Jzc3MiLCJhIjoiY204ejNvdmt4MDg4cDJqcHR2cDAzcHE4NiJ9.FlkhBGISMB5Tev6sj6cong';
 const geocodingClient = mbxGeocoding({ accessToken: MAPBOX_TOKEN });
 
 export async function searchAddress(query) {
@@ -10,5 +10,5 @@ export async function searchAddress(query) {
     countries: ['br'],
   }).send();
 
-  return response.body.features; // cada feature tem geometry (lon/lat) e place_name
+  return response.body.features;
 }
