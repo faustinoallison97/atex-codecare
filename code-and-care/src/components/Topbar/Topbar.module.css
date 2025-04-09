@@ -22,13 +22,12 @@ nav img{
 }
 
 nav ul li{
-    transition: all ease-in-out 0.3s;
+    transition: all ease-in-out 0.4s;
 }
 
 nav ul li:hover{
-    font-size: 1.07rem;
     transition: all ease-in-out 0.3s;
     cursor: pointer;
-    color: #ededed;
+    border-bottom: 1px solid #69afff;
 }
 

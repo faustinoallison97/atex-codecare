@@ -23,10 +23,14 @@ function Route(){
                         <div className={style.direitah1}>
                             <h1>Endereços de entrega</h1>
                         </div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
+                        <div className={style.list_box}>
+                            <div className={style.list}></div>
+                            <div className={style.list}></div>
+                            <div className={style.list}></div>
+                            <div className={style.list}></div>
+                            <div className={style.list}></div>
+                            <div className={style.list}></div>
+                        </div>
                     </div>
                 </div>
             </div>

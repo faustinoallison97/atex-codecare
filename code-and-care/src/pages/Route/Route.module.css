@@ -1,3 +1,9 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 .container{
     display: flex;
     flex-direction: row;
@@ -27,6 +33,8 @@
 .direitah1{
     color: rgb(165, 165, 165);
     font-size: 12px;
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
 }
 
 .resumoRota{
@@ -36,6 +44,7 @@
     align-items: center;
     gap: 15px;
     padding: 10px;
+    margin: 0px 15px 0px 0px;
 }
 
 .info{
@@ -43,8 +52,49 @@
     min-height: 80%;
     border-radius: 16px;
     background-color: #e1f0ff;
+    transition: all ease-in-out .2s;
 }
+
+.info:hover{
+    background-color: #c4d6e7;
+    transition: all ease-in-out .2s;
+    cursor: pointer;
+}
+
 .enderecos{
-    //border: 2px solid black;
     height: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+}
+
+.enderecos h1{
+    margin-right: 7em;
+}
+
+.list_box{
+    width: 90%;
+    height: 100%;
+    overflow: auto;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #e1f0ff;
+    margin-bottom: 15px;
+    border-radius: 16px;
+    width: 95%;
+    height: 35%;
+    transition: all ease-in-out .2s;
+}
+
+.list:hover{
+    background-color: #c4d6e7;
+    transition: all ease-in-out .2s;
+    cursor: pointer;
 }
