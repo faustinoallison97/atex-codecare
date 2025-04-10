@@ -1,8 +1,10 @@
 import style from "./MapaRotas.module.css";
+import Topbar from "../../components/Topbar/Topbar"
 
 function MapaRotas() {
   return (
     <div>
+      <Topbar/>
       <div className={style.container_total}>
         <div className={style.container_mapa}>
           <div className={style.mapa}></div>
