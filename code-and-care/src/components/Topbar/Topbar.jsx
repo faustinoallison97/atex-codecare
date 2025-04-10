@@ -5,20 +5,31 @@ import { useNavigate } from "react-router";
 function Topbar() {
   const navigate = useNavigate();
 
-  function navegarParaMapaRotas() {
-    navigate("/mapa-rotas");
-  }
-  function navegarParaHome() {
+  function navegarHome() {
     navigate("/");
   }
+  function navegarMapaRotas() {
+    navigate("/mapa-rotas");
+  }
+  function navegarSessao2() {
+    window.location.href = "/#sessao2";
+  }
+  function navegarSessao3() {
+    window.location.href = "/#sessao3";
+  }
+  function navegarSessao4() {
+    window.location.href = "/#sessao4";
+  }
+  
 
   return (
     <nav className={style.containernav}>
-      <img onClick={navegarParaHome} src={logo} alt="" />
+      <img onClick={navegarHome} src={logo} alt="" />
       <ul>
-        <li onClick={navegarParaMapaRotas}>Rotas</li>
-        <li>Informações</li>
-        <li>Contato</li>
+        <li onClick={navegarMapaRotas}>Rotas</li>
+        <li onClick={navegarSessao2}>Sobre o Projeto</li>
+        <li onClick={navegarSessao3}>Como Funciona</li>
+        <li onClick={navegarSessao4}>Contato</li>
       </ul>
     </nav>
   );
