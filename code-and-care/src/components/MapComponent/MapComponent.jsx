@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Map, Marker, Source, Layer } from '@vis.gl/react-mapbox';
 import { getRouteFromPoints } from '../../services/mapboxService';
-import { searchAddress } from '../../services/geocodingService'; // importa aqui
+import { searchAddress } from '../../services/geocodingService';
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiaGVyb2Jzc3MiLCJhIjoiY204ejNvdmt4MDg4cDJqcHR2cDAzcHE4NiJ9.FlkhBGISMB5Tev6sj6cong';
 
@@ -10,10 +10,11 @@ const MapComponent = () => {
   const [searchText, setSearchText] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [points, setPoints] = useState([
-    [-46.57421, -23.52871],
-    [-46.62529, -23.53374],
-    [-46.65134, -23.54854]
+    [-45.9475, -21.4256],
+    [-45.934, -21.4188],
+    [-45.9587, -21.4312]
   ]);
+  const [routeInfo, setRouteInfo] = useState(null);
 
   const handleSearchChange = async (e) => {
     const value = e.target.value;
@@ -43,6 +44,7 @@ const MapComponent = () => {
       try {
         const routeData = await getRouteFromPoints(points);
         setRoute(routeData.geojson);
+        setRouteInfo(routeData.info);
       } catch (error) {
         console.error(error);
       }
@@ -53,7 +55,7 @@ const MapComponent = () => {
 
   return (
     <>
-      {/* Input de busca + sugestões */}
+      {/* Input de busca */}
       <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 10 }}>
         <input
           type="text"
@@ -77,10 +79,10 @@ const MapComponent = () => {
         )}
       </div>
 
-      {/* Lista de endereços adicionados */}
+      {/* Lista de pontos */}
       <div style={{
         position: 'absolute',
-        bottom: 10,
+        bottom: 100,
         left: 10,
         zIndex: 10,
         backgroundColor: 'white',
@@ -91,24 +93,55 @@ const MapComponent = () => {
         <h4 style={{ margin: 0 }}>Endereços adicionados:</h4>
         <ul style={{ margin: 0, paddingLeft: '20px' }}>
           {points.map((p, idx) => (
-            <li key={idx}>Lon: {p[0].toFixed(4)}, Lat: {p[1].toFixed(4)}</li>
+            <li key={idx}>Ponto {idx + 1}: Lon {p[0].toFixed(4)}, Lat {p[1].toFixed(4)}</li>
           ))}
         </ul>
       </div>
+
+      {/* Info da Rota */}
+      {routeInfo && (
+        <div style={{
+          position: 'absolute',
+          bottom: 10,
+          right: 10,
+          zIndex: 10,
+          backgroundColor: 'white',
+          padding: '10px',
+          borderRadius: '8px',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+        }}>
+          <strong>Informações da Rota:</strong>
+          <div>Duração: {(routeInfo.duration / 60).toFixed(1)} min</div>
+          <div>Distância: {(routeInfo.distance / 1000).toFixed(2)} km</div>
+          <div>Pontos: {points.length}</div>
+        </div>
+      )}
 
       {/* Mapa */}
       <Map
         mapboxAccessToken={MAPBOX_TOKEN}
         initialViewState={{
-          longitude: -46.62529,
-          latitude: -23.53374,
-          zoom: 12
+          longitude: -45.9475,
+          latitude: -21.4256,
+          zoom: 13
         }}
         style={{ width: '100%', height: '100vh' }}
         mapStyle="mapbox://styles/mapbox/streets-v11"
       >
         {points.map((p, idx) => (
-          <Marker key={idx} longitude={p[0]} latitude={p[1]} />
+          <Marker key={idx} longitude={p[0]} latitude={p[1]} anchor="bottom">
+            <div style={{ width: 30, height: 40 }}>
+              <svg
+                viewBox="0 0 24 24"
+                fill="red"
+                xmlns="http://www.w3.org/2000/svg"
+                width="30"
+                height="40"
+              >
+                <path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z" />
+              </svg>
+            </div>
+          </Marker>
         ))}
 
         {route && (

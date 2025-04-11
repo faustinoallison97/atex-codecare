@@ -1,25 +1,24 @@
-// src/services/mapboxService.js
+import mbxDirections from '@mapbox/mapbox-sdk/services/directions';
+
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiaGVyb2Jzc3MiLCJhIjoiY204ejNvdmt4MDg4cDJqcHR2cDAzcHE4NiJ9.FlkhBGISMB5Tev6sj6cong';
+const directionsClient = mbxDirections({ accessToken: MAPBOX_TOKEN });
 
 export async function getRouteFromPoints(points) {
-    const coordinates = points.map(p => p.join(',')).join(';');
-    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordinates}?geometries=geojson&overview=full&access_token=${MAPBOX_TOKEN}`;
-  
-    const response = await fetch(url);
-    const data = await response.json();
-  
-    if (!data.routes || !data.routes.length) {
-      throw new Error('Nenhuma rota encontrada');
+  const response = await directionsClient.getDirections({
+    profile: 'driving',
+    geometries: 'geojson',
+    waypoints: points.map(([lon, lat]) => ({ coordinates: [lon, lat] }))
+  }).send();
+
+  const route = response.body.routes[0];
+  return {
+    geojson: {
+      type: 'Feature',
+      geometry: route.geometry
+    },
+    info: {
+      duration: route.duration, // segundos
+      distance: route.distance  // metros
     }
-  
-    return {
-      geojson: {
-        type: 'Feature',
-        properties: {},
-        geometry: data.routes[0].geometry
-      },
-      distance: data.routes[0].distance,
-      duration: data.routes[0].duration,
-    };
-  }
-  
+  };
+}
