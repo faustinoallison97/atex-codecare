@@ -13,6 +13,9 @@
 }
 
 .container_mapa {
+  flex: 1;
+  height: 100%;
+  position: relative;
   width: 75%;
   height: calc(100vh - 40px);
   display: flex;
@@ -24,6 +27,12 @@
 }
 .mapa {
   background-color: #333;
+}
+
+/* Oculta as divs específicas */
+.mapboxgl-ctrl mapboxgl-ctrl-attrib,
+.mapboxgl-children {
+  display: none !important;
 }
 
 .container_info_total {
@@ -123,4 +132,15 @@
   padding: 8px;
   border-radius: 15px;
   color: white;
+}
+
+
+div[mapboxgl-children] {
+  z-index: 0 !important;
+  position: absolute !important;
+}
+
+.container_mapa > div {
+  z-index: 1;
+  position: relative;
 }

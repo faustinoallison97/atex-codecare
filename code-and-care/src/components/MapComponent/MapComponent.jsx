@@ -1,20 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Map, Marker, Source, Layer } from '@vis.gl/react-mapbox';
 import { getRouteFromPoints } from '../../services/mapboxService';
-import { searchAddress } from '../../services/geocodingService';
+import { searchAddress, reverseGeocode } from '../../services/geocodingService';
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiaGVyb2Jzc3MiLCJhIjoiY204ejNvdmt4MDg4cDJqcHR2cDAzcHE4NiJ9.FlkhBGISMB5Tev6sj6cong';
 
-const MapComponent = () => {
+const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
   const [route, setRoute] = useState(null);
   const [searchText, setSearchText] = useState('');
   const [suggestions, setSuggestions] = useState([]);
-  const [points, setPoints] = useState([
-    [-45.9475, -21.4256],
-    [-45.934, -21.4188],
-    [-45.9587, -21.4312]
-  ]);
-  const [routeInfo, setRouteInfo] = useState(null);
 
   const handleSearchChange = async (e) => {
     const value = e.target.value;
@@ -32,9 +26,12 @@ const MapComponent = () => {
     }
   };
 
-  const handleSelectSuggestion = (feature) => {
+  const handleSelectSuggestion = async (feature) => {
     const coords = feature.geometry.coordinates;
+    const address = await reverseGeocode(coords); // Converte coordenadas para endereço
+
     setPoints((prev) => [...prev, coords]);
+    setAddresses((prev) => [...prev, address]); // Atualiza os endereços
     setSearchText('');
     setSuggestions([]);
   };
@@ -44,14 +41,16 @@ const MapComponent = () => {
       try {
         const routeData = await getRouteFromPoints(points);
         setRoute(routeData.geojson);
-        setRouteInfo(routeData.info);
+        setRouteInfo(routeData.info); // Atualiza informações de tempo e distância
       } catch (error) {
         console.error(error);
       }
     };
 
-    fetchRoute();
-  }, [points]);
+    if (points.length >= 2) {
+      fetchRoute();
+    }
+  }, [points, setRouteInfo]);
 
   return (
     <>
@@ -79,56 +78,19 @@ const MapComponent = () => {
         )}
       </div>
 
-      {/* Lista de pontos */}
-      <div style={{
-        position: 'absolute',
-        bottom: 100,
-        left: 10,
-        zIndex: 10,
-        backgroundColor: 'white',
-        padding: '10px',
-        borderRadius: '8px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-      }}>
-        <h4 style={{ margin: 0 }}>Endereços adicionados:</h4>
-        <ul style={{ margin: 0, paddingLeft: '20px' }}>
-          {points.map((p, idx) => (
-            <li key={idx}>Ponto {idx + 1}: Lon {p[0].toFixed(4)}, Lat {p[1].toFixed(4)}</li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Info da Rota */}
-      {routeInfo && (
-        <div style={{
-          position: 'absolute',
-          bottom: 10,
-          right: 10,
-          zIndex: 10,
-          backgroundColor: 'white',
-          padding: '10px',
-          borderRadius: '8px',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-        }}>
-          <strong>Informações da Rota:</strong>
-          <div>Duração: {(routeInfo.duration / 60).toFixed(1)} min</div>
-          <div>Distância: {(routeInfo.distance / 1000).toFixed(2)} km</div>
-          <div>Pontos: {points.length}</div>
-        </div>
-      )}
-
       {/* Mapa */}
       <Map
         mapboxAccessToken={MAPBOX_TOKEN}
+        attributionControl={false} 
         initialViewState={{
           longitude: -45.9475,
           latitude: -21.4256,
-          zoom: 13
+          zoom: 13,
         }}
-        style={{ width: '100%', height: '100vh' }}
+        style={{ width: '100%', height: '100%' }}
         mapStyle="mapbox://styles/mapbox/streets-v11"
       >
-        {points.map((p, idx) => (
+        {/* {points.map((p, idx) => (
           <Marker key={idx} longitude={p[0]} latitude={p[1]} anchor="bottom">
             <div style={{ width: 30, height: 40 }}>
               <svg
@@ -142,7 +104,7 @@ const MapComponent = () => {
               </svg>
             </div>
           </Marker>
-        ))}
+        ))} */}
 
         {route && (
           <Source id="route" type="geojson" data={route}>
@@ -151,7 +113,7 @@ const MapComponent = () => {
               type="line"
               paint={{
                 'line-color': '#3b9ddd',
-                'line-width': 4
+                'line-width': 4,
               }}
             />
           </Source>

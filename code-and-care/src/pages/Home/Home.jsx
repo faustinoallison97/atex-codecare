@@ -1,4 +1,5 @@
 import style from "./Home.module.css";
+import ImgSegundaTela from "../../assets/img-tela-2.avif";
 import { FiMapPin } from "react-icons/fi";
 import { LuUsers } from "react-icons/lu";
 import { FaRegHeart } from "react-icons/fa6";
