@@ -12,3 +12,13 @@ export async function searchAddress(query) {
 
   return response.body.features;
 }
+
+export async function reverseGeocode([longitude, latitude]) {
+  const response = await geocodingClient.reverseGeocode({
+    query: [longitude, latitude],
+    limit: 1,
+  }).send();
+
+  const feature = response.body.features[0];
+  return feature ? feature.place_name : 'Endereço não encontrado';
+}
