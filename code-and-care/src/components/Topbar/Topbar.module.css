@@ -19,6 +19,7 @@ nav ul{
 nav img{
     width: 175px;
     margin-right: 15em;
+    cursor: pointer;
 }
 
 nav ul li{
