@@ -4,8 +4,26 @@ import Topbar from "../../components/Topbar/Topbar";
 import MapComponent from "../../components/MapComponent/MapComponent";
 
 function MapaRotas() {
-  const [points, setPoints] = useState([]);
-  const [addresses, setAddresses] = useState([]);
+  const [points, setPoints] = useState([
+    [-45.9475, -21.4256], // Rua Gabriela da Costa Santos, 379 – Bairro Pinheirinho
+    [-45.9500, -21.4200], // Rua Juscelino Barbosa, 1438 – Centro
+    [-45.9520, -21.4210], // Rua Benjamim Contant, 432 – Centro
+    [-45.9550, -21.4230], // Rua Fany Enguel, 137 – Campos Elísios
+    [-45.9600, -21.4280], // Rua Barão de Alfenas, 1637 – Residencial Itaparica
+    [-45.9610, -21.4290], // Rua Barão de Alfenas, 204 – Residencial Itaparica
+    [-45.9650, -21.4300], // Rua Onofre Gomes Pereira, 400 Bloco 1 - AP 24 – Recreio Vale do Sol
+    [-45.9700, -21.4350], // Rua Cafezinho, 297 – Recreio
+  ]);
+  const [addresses, setAddresses] = useState([
+    "Rua Gabriela da Costa Santos, 379 – Bairro Pinheirinho",
+    "Rua Juscelino Barbosa, 1438 – Centro",
+    "Rua Benjamim Contant, 432 – Centro",
+    "Rua Fany Enguel, 137 – Campos Elísios",
+    "Rua Barão de Alfenas, 1637 – Residencial Itaparica",
+    "Rua Barão de Alfenas, 204 – Residencial Itaparica",
+    "Rua Onofre Gomes Pereira, 400 Bloco 1 - AP 24 – Recreio Vale do Sol",
+    "Rua Cafezinho, 297 – Recreio",
+  ]);
   const [routeInfo, setRouteInfo] = useState(null);
 
   return (
@@ -17,7 +35,7 @@ function MapaRotas() {
             points={points}
             setPoints={setPoints}
             setRouteInfo={setRouteInfo}
-            setAddresses={setAddresses} 
+            setAddresses={setAddresses}
           />
         </div>
 
