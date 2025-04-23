@@ -8,15 +8,29 @@ import Topbar from "../../components/Topbar/Topbar";
 import { useNavigate } from "react-router";
 import { useState, useEffect } from "react";
 import { AiOutlineArrowUp } from "react-icons/ai";
+import { enviarEmailInteressado } from '../../services/brevo';
 
 function Home() {
   const navigate = useNavigate();
+  const [mostrarBotao, setMostrarBotao] = useState(false);
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [mensagem, setMensagem] = useState('');
 
   function navegarMapaRotas() {
     navigate("/mapa-rotas");
   }
 
-  const [mostrarBotao, setMostrarBotao] = useState(false);
+  const EnviarEmailInteressado = async () => {
+    try {
+      await enviarEmailInteressado(nome, email, mensagem);
+      setNome('');
+      setEmail('');
+      setMensagem('');
+    } catch (error) {
+      console.error('Erro ao enviar email:', error);
+    };
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -132,10 +146,34 @@ function Home() {
             </div>
           </div>
 
-          <form className={style.formulario_contato}>
-            <input type="text" placeholder="Nome completo" required />
-            <input type="email" placeholder="Seu e-mail" required />
-            <textarea placeholder="Digite sua mensagem aqui..." rows="5" required></textarea>
+          <form
+            className={style.formulario_contato}
+            onSubmit={(e) => {
+              e.preventDefault();
+              EnviarEmailInteressado();
+            }}
+          >
+            <input
+              type="text"
+              placeholder="Nome completo"
+              required
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+            />
+            <input
+              type="email"
+              placeholder="Seu e-mail"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <textarea
+              placeholder="Digite sua mensagem aqui..."
+              rows="5"
+              required
+              value={mensagem}
+              onChange={(e) => setMensagem(e.target.value)}
+            ></textarea>
             <button type="submit">Enviar Mensagem</button>
           </form>
         </div>

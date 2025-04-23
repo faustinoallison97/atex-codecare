@@ -11,6 +11,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@vis.gl/react-mapbox": "^8.0.2",
     "mapbox-gl": "^3.11.0",
+    "nodemailer": "^6.10.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-icons": "^5.5.0",
