@@ -90,6 +90,7 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
         style={{ width: '100%', height: '100%' }}
         mapStyle="mapbox://styles/mapbox/streets-v11"
       >
+        
         {/* {points.map((p, idx) => (
           <Marker key={idx} longitude={p[0]} latitude={p[1]} anchor="bottom">
             <div style={{ width: 30, height: 40 }}>
