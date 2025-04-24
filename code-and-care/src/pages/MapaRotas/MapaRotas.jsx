@@ -58,20 +58,22 @@ function MapaRotas() {
 
             <div className={style.container_linha_info_rota}>
               <div className={style.container_info_rota}>
-                Tempo Estimado
                 <div>
-                  {routeInfo ? `${(routeInfo.duration / 60).toFixed(1)} min` : "--"}
+                  Tempo Estimado
+                  <div className={style.info}>{routeInfo ? `${(routeInfo.duration / 60).toFixed(1)} min` : "--"}</div>
                 </div>
               </div>
               <div className={style.container_info_rota}>
-                Distância Total
                 <div>
-                  {routeInfo ? `${(routeInfo.distance / 1000).toFixed(2)} km` : "--"}
+                  Distância Total
+                  <div className={style.info}>{routeInfo ? `${(routeInfo.distance / 1000).toFixed(2)} km` : "--"}</div>
                 </div>
               </div>
               <div className={style.container_info_rota}>
-                Cestas Básicas
-                <div>{addresses.length}</div> {/* Número de endereços */}
+                <div>
+                  Cestas Básicas
+                  <div className={style.info}>{addresses.length}</div> {/* Número de endereços */}
+                </div>
               </div>
             </div>
           </div>
