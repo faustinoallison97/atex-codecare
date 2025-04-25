@@ -6,13 +6,41 @@ import { FaRegHeart } from "react-icons/fa6";
 import { MdOutlineArrowRightAlt } from "react-icons/md";
 import Topbar from "../../components/Topbar/Topbar";
 import { useNavigate } from "react-router";
+import { useState, useEffect } from "react";
+import { AiOutlineArrowUp } from "react-icons/ai";
+import { enviarEmailInteressado } from '../../services/brevo';
 
 function Home() {
   const navigate = useNavigate();
+  const [mostrarBotao, setMostrarBotao] = useState(false);
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [mensagem, setMensagem] = useState('');
 
   function navegarMapaRotas() {
     navigate("/mapa-rotas");
   }
+
+  const EnviarEmailInteressado = async () => {
+    try {
+      await enviarEmailInteressado(nome, email, mensagem);
+      setNome('');
+      setEmail('');
+      setMensagem('');
+    } catch (error) {
+      console.error('Erro ao enviar email:', error);
+    };
+  }
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setMostrarBotao(window.scrollY > 50);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
 
   return (
     <>
@@ -106,26 +134,57 @@ function Home() {
         </div>
 
         <div id="sessao4" className={style.container_contato_tela}>
-  <div className={style.info_contato}>
-    <button className={style.botao_entre_em_contato}>Entre em Contato</button>
-    <h2>Quer fazer parte dessa missão?</h2>
-    <p>Fale com a gente! Seja para doar, participar ou tirar dúvidas — estamos aqui para ajudar.</p>
+          <div className={style.info_contato}>
+            <button className={style.botao_entre_em_contato}>Entre em Contato</button>
+            <h2>Quer fazer parte dessa missão?</h2>
+            <p>Fale com a gente! Seja para doar, participar ou tirar dúvidas — estamos aqui para ajudar.</p>
 
-    <div className={style.detalhes_contato}>
-      <p><strong>📍 Endereço:</strong> Rua Solidariedade, 123 - Centro</p>
-      <p><strong>📞 Telefone:</strong> (11) 99999-9999</p>
-      <p><strong>✉️ Email:</strong> contato@atexcaridade.org</p>
-    </div>
-  </div>
+            <div className={style.detalhes_contato}>
+              <p><strong>📍 Endereço:</strong> Rua Solidariedade, 123 - Centro</p>
+              <p><strong>📞 Telefone:</strong> (11) 99999-9999</p>
+              <p><strong>✉️ Email:</strong> contato@atexcaridade.org</p>
+            </div>
+          </div>
 
-  <form className={style.formulario_contato}>
-    <input type="text" placeholder="Nome completo" required />
-    <input type="email" placeholder="Seu e-mail" required />
-    <textarea placeholder="Digite sua mensagem aqui..." rows="5" required></textarea>
-    <button type="submit">Enviar Mensagem</button>
-  </form>
-</div>
-
+          <form
+            className={style.formulario_contato}
+            onSubmit={(e) => {
+              e.preventDefault();
+              EnviarEmailInteressado();
+            }}
+          >
+            <input
+              type="text"
+              placeholder="Nome completo"
+              required
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+            />
+            <input
+              type="email"
+              placeholder="Seu e-mail"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <textarea
+              placeholder="Digite sua mensagem aqui..."
+              rows="5"
+              required
+              value={mensagem}
+              onChange={(e) => setMensagem(e.target.value)}
+            ></textarea>
+            <button type="submit">Enviar Mensagem</button>
+          </form>
+        </div>
+        {mostrarBotao && (
+          <button
+            className={style.botao_voltar_topo}
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          >
+            <AiOutlineArrowUp />
+          </button>
+        )}
       </div>
     </>
   );
