@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Map, Marker, Source, Layer } from '@vis.gl/react-mapbox';
 import { getRouteFromPoints } from '../../services/mapboxService';
 import { searchAddress, reverseGeocode } from '../../services/geocodingService';
+import styles from './MapComponent.module.css';
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiaGVyb2Jzc3MiLCJhIjoiY204ejNvdmt4MDg4cDJqcHR2cDAzcHE4NiJ9.FlkhBGISMB5Tev6sj6cong';
 
@@ -79,20 +80,26 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
       </div>
 
       {/* Mapa */}
-      <Map
-        mapboxAccessToken={MAPBOX_TOKEN}
-        attributionControl={false} 
-        initialViewState={{
-          longitude: -45.9475,
-          latitude: -21.4256,
-          zoom: 13,
-        }}
-        style={{ width: '100%', height: '100%' }}
-        mapStyle="mapbox://styles/mapbox/streets-v11"
-      >
-        {/* {points.map((p, idx) => (
-          <Marker key={idx} longitude={p[0]} latitude={p[1]} anchor="bottom">
-            <div style={{ width: 30, height: 40 }}>
+      <div className={styles.mapWrapper}>
+        <Map
+          mapboxAccessToken={MAPBOX_TOKEN}
+          attributionControl={false}
+          initialViewState={{
+            longitude: -45.9475,
+            latitude: -21.4256,
+            zoom: 12.5,
+          }}
+          style={{ width: '100%', height: '100%' }}
+          mapStyle="mapbox://styles/mapbox/streets-v11"
+        >
+          {/* Renderizando os markers */}
+          {points.map((p, idx) => (
+            <Marker
+              key={idx}
+              longitude={p[0]}
+              latitude={p[1]}
+              anchor="bottom"
+            >
               <svg
                 viewBox="0 0 24 24"
                 fill="red"
@@ -102,23 +109,23 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
               >
                 <path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7z" />
               </svg>
-            </div>
-          </Marker>
-        ))} */}
+            </Marker>
+          ))}
 
-        {route && (
-          <Source id="route" type="geojson" data={route}>
-            <Layer
-              id="route-layer"
-              type="line"
-              paint={{
-                'line-color': '#3b9ddd',
-                'line-width': 4,
-              }}
-            />
-          </Source>
-        )}
-      </Map>
+          {route && (
+            <Source id="route" type="geojson" data={route}>
+              <Layer
+                id="route-layer"
+                type="line"
+                paint={{
+                  'line-color': '#3b9ddd',
+                  'line-width': 4,
+                }}
+              />
+            </Source>
+          )}
+        </Map>
+      </div>
     </>
   );
 };
