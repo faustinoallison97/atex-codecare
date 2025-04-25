@@ -255,6 +255,26 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
     }
   };
 
+  const returnToUserLocation = () => {
+    if (userLocation) {
+      let bearing = viewState.bearing;
+      if (isNavigating && navigationIndex < points.length - 1) {
+        const nextPoint = points[navigationIndex + 1];
+        bearing = getBearing(userLocation, nextPoint);
+      }
+      
+      setViewState({
+        longitude: userLocation[0],
+        latitude: userLocation[1],
+        zoom: 17,
+        pitch: 60,
+        bearing: bearing
+      });
+    } else {
+      getUserLocation();
+    }
+  };
+
   return (
     <>
       <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 10 }}>
@@ -307,6 +327,36 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
         </button>
       </div>
       
+      {isNavigating && (
+        <div style={{ position: 'absolute', top: 60, right: 10, zIndex: 10 }}>
+          <button
+            onClick={returnToUserLocation}
+            style={{
+              backgroundColor: '#34C759',
+              color: 'white',
+              padding: '8px',
+              borderRadius: '50%',
+              border: 'none',
+              width: '40px',
+              height: '40px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer'
+            }}
+            title="Voltar à sua localização na navegação"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="4" stroke="white" strokeWidth="2" />
+              <path d="M12 2L12 8" stroke="white" strokeWidth="2" strokeLinecap="round" />
+              <path d="M12 16L12 22" stroke="white" strokeWidth="2" strokeLinecap="round" />
+              <path d="M2 12L8 12" stroke="white" strokeWidth="2" strokeLinecap="round" />
+              <path d="M16 12L22 12" stroke="white" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </button>
+        </div>
+      )}
+      
       {locationError && (
         <div style={{ 
           position: 'absolute', 
@@ -323,6 +373,8 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
         </div>
       )}
       
+      {/* Botões de Navegação - Temporariamente ocultos para apresentação */}
+      {/* 
       <div style={{ position: 'absolute', bottom: 20, right: 20, zIndex: 10 }}>
         {!isNavigating ? (
           <button 
@@ -355,6 +407,7 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
           </button>
         )}
       </div>
+      */}
 
       <div className={styles.mapWrapper}>
         <Map
