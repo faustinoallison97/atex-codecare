@@ -5,7 +5,7 @@ import MapComponent from "../../components/MapComponent/MapComponent";
 
 function MapaRotas() {
   const [points, setPoints] = useState([
-    [-45.948898, -21.445104], // Av. José Paulino da Costa, 950 – Centro
+    // [-45.948898, -21.445104], // Av. José Paulino da Costa, 950 – Centro
     [-45.9475, -21.4256], // Rua Gabriela da Costa Santos, 379 – Bairro Pinheirinho
     [-45.9500, -21.4200], // Rua Juscelino Barbosa, 1438 – Centro
     [-45.9520, -21.4210], // Rua Benjamim Contant, 432 – Centro
@@ -22,7 +22,7 @@ function MapaRotas() {
   ]);
 
   const [addresses, setAddresses] = useState([
-    "Av. José Paulino da Costa, 950 – Centro",
+    //"Av. José Paulino da Costa, 950 – Centro",
     "Rua Gabriela da Costa Santos, 379 – Bairro Pinheirinho",
     "Rua Juscelino Barbosa, 1438 – Centro",
     "Rua Benjamim Contant, 432 – Centro",
