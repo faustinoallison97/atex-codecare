@@ -41,3 +41,38 @@ nav ul li:hover{
     color: #ededed;
 }
 
+@media (max-width: 1024px) {
+    nav img {
+        width: 150px;
+        margin-right: 8em;
+    }
+    nav ul {
+        gap: 50px;
+    }
+}
+
+@media (max-width: 768px) {
+    nav img {
+        width: 120px;
+        margin-right: 2em;
+    }
+    nav ul {
+        gap: 30px;
+    }
+}
+
+@media (max-width: 480px) {
+    .containernav {
+        flex-direction: column;
+        height: auto;
+        padding: 10px 0;
+    }
+    nav img {
+        margin: 0;
+        margin-bottom: 10px;
+    }
+    nav ul {
+        flex-direction: column;
+        gap: 20px;
+    }
+}
