@@ -201,8 +201,6 @@ html {
   background-color: rgba(249, 115, 22, 0.1);
 }
 
-
-
 /* Estilização quarta tela */
 .container_contato_tela {
   height: 100vh;
@@ -313,4 +311,128 @@ html {
 .botao_voltar_topo:hover {
   transform: scale(1.03);
   background-color: #0056b3;
+}
+
+/* Para telas menores que 1024px */
+@media (max-width: 1024px) {
+  .container_conteudo_primeira_tela h1 {
+    font-size: 3em;
+  }
+
+  .container_conteudo_primeira_tela p {
+    width: 60%;
+    font-size: 1em;
+  }
+
+  .botao_rotas {
+    width: 50%;
+  }
+
+  .container_segunda_tela {
+    flex-direction: column;
+    height: auto;
+    padding: 2rem 1rem;
+  }
+
+  .container_info_sefunda_tela,
+  .imagem_segunda_tela {
+    width: 90%;
+  }
+
+  .container_info_sefunda_tela p {
+    width: 100%;
+  }
+
+  .container_terceira_tela {
+    height: auto;
+    padding: 2rem 1rem;
+  }
+
+  .container_info_terceira_tela p {
+    width: 90%;
+  }
+
+  .container_cards_terceira_tela {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .container_card_terceira_tela {
+    width: 80%;
+  }
+
+  .container_contato_tela {
+    flex-direction: column;
+    padding: 2rem 1rem;
+  }
+
+  .info_contato,
+  .formulario_contato {
+    width: 90%;
+  }
+}
+
+/* Para telas menores que 768px (celulares) */
+@media (max-width: 768px) {
+  .container_conteudo_primeira_tela h1 {
+    font-size: 2em;
+    text-align: center;
+  }
+
+  .container_conteudo_primeira_tela p {
+    width: 90%;
+    font-size: 1em;
+  }
+
+  .botao_rotas {
+    width: 80%;
+  }
+
+  .container_segunda_tela {
+    gap: 20px;
+  }
+
+  .container_info_sefunda_tela h2,
+  .container_info_terceira_tela h2 {
+    font-size: 1.5em;
+    text-align: center;
+  }
+
+  .container_info_sefunda_tela p,
+  .container_info_terceira_tela p {
+    font-size: 1em;
+  }
+
+  .container_card_terceira_tela {
+    width: 90%;
+  }
+
+  .formulario_contato input,
+  .formulario_contato textarea {
+    width: 100%;
+  }
+}
+
+/* Para telas menores que 480px (celular pequeno) */
+@media (max-width: 480px) {
+  .container_conteudo_primeira_tela {
+    height: 100vh;
+    gap: 2rem;
+  }
+
+  .container_conteudo_primeira_tela h1 {
+    font-size: 1.8em;
+  }
+
+  .botao_rotas {
+    width: 90%;
+    height: 40px;
+  }
+
+  .container_info_sefunda_tela .botao_sobre_projeto,
+  .container_info_terceira_tela .botao_como_funciona,
+  .botao_entre_em_contato {
+    width: 90%;
+    font-size: 1em;
+  }
 }
