@@ -37,13 +37,12 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
   const [directionMessage, setDirectionMessage] = useState(DIRECTION_MESSAGES.STRAIGHT);
   const [showArrival, setShowArrival] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [userPathRoute, setUserPathRoute] = useState(null); // Add this state for the user path
+  const [userPathRoute, setUserPathRoute] = useState(null);
 
   const navigationTimer = useRef(null);
   const locationWatchId = useRef(null);
   const mapRef = useRef(null);
 
-  // Add this function to calculate a route from user to next point
   const calculateUserToPointRoute = async (userLocation, nextPoint) => {
     if (!userLocation || !nextPoint) return;
     
@@ -76,7 +75,6 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
         setUserLocation([longitude, latitude]);
 
         if (isNavigating && navigationIndex < points.length) {
-          // CORREÇÃO: Calcular caminho para o ponto atual
           calculateUserToPointRoute([longitude, latitude], points[navigationIndex]);
           
           let bearing = 0;
@@ -103,48 +101,35 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
             const distance = getDistance(longitude, latitude, nextPoint[0], nextPoint[1]);
 
             if (distance < 0.0003) {
-              // Mostrar animação de chegada
               setShowArrival(true);
 
-              // Esconder após 1.5 segundos
               setTimeout(() => {
                 setShowArrival(false);
               }, 1500);
 
-              // Incrementa o índice de navegação
               setNavigationIndex(prev => prev + 1);
               
-              // NOVA FUNCIONALIDADE: Remover o ponto que acabamos de chegar
               if (navigationIndex < points.length) {
-                // Criamos cópias para não modificar diretamente os estados
                 const newPoints = [...points];
                 
-                // Removemos o ponto atual (que acabamos de chegar)
                 newPoints.splice(navigationIndex, 1);
                 
-                // Atualizamos os pontos
                 setPoints(newPoints);
                 
-                // Atualizamos os endereços correspondentes
                 setAddresses(prevAddresses => {
                   const newAddresses = [...prevAddresses];
                   newAddresses.splice(navigationIndex, 1);
                   return newAddresses;
                 });
                 
-                // Corrigimos o índice de navegação
                 setNavigationIndex(prev => prev - 1);
                 
-                // CORREÇÃO: Recalcular imediatamente a rota do usuário para o próximo ponto
-                // após remover o ponto atual
                 if (newPoints.length > 0) {
                   calculateUserToPointRoute([longitude, latitude], newPoints[Math.min(navigationIndex, newPoints.length - 1)]);
                 } else {
-                  // Se não houver mais pontos, limpar a rota do usuário
                   setUserPathRoute(null);
                 }
                 
-                // Recalcular a rota principal com os pontos restantes
                 if (newPoints.length >= 2) {
                   getRouteFromPoints(newPoints)
                     .then(routeData => {
@@ -155,7 +140,6 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
                       console.error('Erro ao recalcular rota:', error);
                     });
                 } else if (newPoints.length < 2) {
-                  // Limpar a rota se não tiver pontos suficientes
                   setRoute(null);
                   setRouteInfo(null);
                 }
@@ -198,12 +182,10 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
     const value = e.target.value;
     setSearchText(value);
 
-    if (value.length >= 2) { // Reduzir para 2 caracteres para iniciar a busca mais cedo
+    if (value.length >= 2) {
       try {
-        // Opções de busca que incluem a proximidade (se disponível)
         const searchOptions = {};
         
-        // Se tivermos a localização do usuário, usar como referência para melhorar os resultados
         if (userLocation) {
           searchOptions.proximity = userLocation;
         }
@@ -228,7 +210,6 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
     setSuggestions([]);
   };
 
-  // Efeito para recalcular a rota quando os pontos mudam externamente
   useEffect(() => {
     const fetchRoute = async () => {
       if (points.length >= 2) {
@@ -237,7 +218,6 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
           setRoute(routeData.geojson);
           setRouteInfo(routeData.info);
           
-          // Se estiver navegando, recalcular a rota do usuário para o próximo ponto
           if (isNavigating && userLocation && navigationIndex < points.length) {
             calculateUserToPointRoute(userLocation, points[navigationIndex]);
           }
@@ -245,7 +225,6 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
           console.error('Erro ao calcular rota:', error);
         }
       } else {
-        // Se não houver pontos suficientes, limpar a rota
         setRoute(null);
         setRouteInfo(null);
         setUserPathRoute(null);
@@ -253,7 +232,7 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
     };
     
     fetchRoute();
-  }, [points]); // Dependência apenas em points para atualizar quando os pontos mudam
+  }, [points]);
 
   const startNavigation = () => {
     if (!route || points.length < 2) return;
@@ -263,7 +242,6 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
 
     getUserLocation();
 
-    // Calculate initial path if user location is available
     if (userLocation && points.length > 0) {
       calculateUserToPointRoute(userLocation, points[0]);
     }
@@ -399,13 +377,10 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
   };
 
   const returnToUserLocation = () => {
-    // Primeira coisa: chamar getUserLocation para garantir que estamos tentando obter a localização
     getUserLocation();
     
-    // Indicador visual de que estamos movendo
-    setIsTransitioning(true); // Novo estado para controlar transições
+    setIsTransitioning(true);
     
-    // Se já temos a localização do usuário, centralize o mapa nela
     if (userLocation) {
       let bearing = viewState.bearing;
       if (isNavigating && navigationIndex < points.length - 1) {
@@ -419,70 +394,58 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
           zoom: 17,
           pitch: 60,
           bearing: bearing,
-          speed: 1.5, // Velocidade da animação
-          curve: 1, // Curvatura da animação
-          essential: true // Garante que a transição aconteça
+          speed: 1.5,
+          curve: 1,
+          essential: true
         });
       }
       
-      // Define um timeout para garantir que a transição aconteça
       setTimeout(() => {
-        // Verifica novamente se a posição está correta
         if (mapRef.current) {
           const center = mapRef.current.getCenter();
           const dist = getDistance(center.lng, center.lat, userLocation[0], userLocation[1]);
           
-          if (dist > 0.0001) { // Se ainda estiver longe
-            // Força uma atualização direta usando a API do Mapbox
+          if (dist > 0.0001) {
             mapRef.current.flyTo({
               center: [userLocation[0], userLocation[1]],
               zoom: 17,
               pitch: 60,
               bearing: bearing,
-              essential: true // Ignora transições suaves
+              essential: true
             });
           }
         }
         
         setIsTransitioning(false);
-      }, 1000); // Espere 1 segundo para a transição acontecer
+      }, 1000);
     }
-    // Se não temos a localização, vamos usar um intervalo para verificar quando estiver disponível
     else {
-      // Primeiro, exiba uma mensagem ao usuário
       setLocationError("Obtendo sua localização...");
       
-      // Adicione uma referência para o intervalo
       const checkLocationInterval = setInterval(() => {
         if (userLocation) {
-          // Quando a localização estiver disponível
           let bearing = viewState.bearing;
           if (isNavigating && navigationIndex < points.length - 1) {
             const nextPoint = points[navigationIndex + 1];
             bearing = getBearing(userLocation, nextPoint);
           }
           
-          // Atualizar a visualização
           setViewState({
             longitude: userLocation[0],
             latitude: userLocation[1],
-            zoom: 17, // Zoom mais alto
+            zoom: 17,
             pitch: 60,
             bearing: bearing
           });
           
-          // Limpar a mensagem de erro
           setLocationError(null);
           
-          // Limpar o intervalo
           clearInterval(checkLocationInterval);
         }
-      }, 500); // Verificar a cada 500ms
+      }, 500);
       
-      // Limpar o intervalo após 10 segundos para evitar loops infinitos
       setTimeout(() => {
         clearInterval(checkLocationInterval);
-        // Se ainda não tivermos a localização após 10 segundos, mostrar erro
         if (!userLocation) {
           setLocationError("Não foi possível obter sua localização.");
         }
@@ -492,227 +455,6 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
 
   return (
     <>
-      <div style={{ position: 'absolute', top: 10, left: 10, zIndex: 10 }}>
-        <input
-          type="text"
-          value={searchText}
-          onChange={handleSearchChange}
-          placeholder="Digite um endereço..."
-          style={{ padding: '8px', width: '300px', borderRadius: '4px', border: '1px solid #ccc' }}
-        />
-        {suggestions.length > 0 && (
-          <ul style={{ backgroundColor: '#fff', listStyle: 'none', padding: 0, margin: 0, border: '1px solid #ccc' }}>
-            {suggestions.map((s, idx) => (
-              <li
-                key={idx}
-                onClick={() => handleSelectSuggestion(s)}
-                style={{ padding: '5px 10px', cursor: 'pointer' }}
-              >
-                {s.place_name}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
-      <div style={{ position: 'absolute', top: 10, right: 10, zIndex: 10 }}>
-        <button
-          onClick={centerOnUser}
-          style={{
-            backgroundColor: '#007AFF',
-            color: 'white',
-            padding: '8px',
-            borderRadius: '50%',
-            border: 'none',
-            width: '40px',
-            height: '40px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer'
-          }}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="4" stroke="white" strokeWidth="2" />
-            <path d="M12 2V4" stroke="white" strokeWidth="2" strokeLinecap="round" />
-            <path d="M12 20V22" stroke="white" strokeWidth="2" strokeLinecap="round" />
-            <path d="M2 12H4" stroke="white" strokeWidth="2" strokeLinecap="round" />
-            <path d="M20 12H22" stroke="white" strokeWidth="2" strokeLinecap="round" />
-          </svg>
-        </button>
-      </div>
-
-      {isNavigating && (
-        <div style={{ position: 'absolute', top: 60, right: 10, zIndex: 10 }}>
-          <button
-            onClick={returnToUserLocation}
-            style={{
-              backgroundColor: '#34C759',
-              color: 'white',
-              padding: '8px',
-              borderRadius: '50%',
-              border: 'none',
-              width: '40px',
-              height: '40px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer'
-            }}
-            title="Voltar à sua localização na navegação"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12" cy="12" r="4" stroke="white" strokeWidth="2" />
-              <path d="M12 2L12 8" stroke="white" strokeWidth="2" strokeLinecap="round" />
-              <path d="M12 16L12 22" stroke="white" strokeWidth="2" strokeLinecap="round" />
-              <path d="M2 12L8 12" stroke="white" strokeWidth="2" strokeLinecap="round" />
-              <path d="M16 12L22 12" stroke="white" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-          </button>
-        </div>
-      )}
-
-      {locationError && (
-        <div style={{
-          position: 'absolute',
-          top: 60,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          backgroundColor: '#FF3B30',
-          color: 'white',
-          padding: '8px 16px',
-          borderRadius: '4px',
-          zIndex: 10
-        }}>
-          {locationError}
-        </div>
-      )}
-
-      {isNavigating && (
-        <div style={{
-          position: 'absolute',
-          bottom: 80,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          backgroundColor: 'rgba(0, 122, 255, 0.9)',
-          color: 'white',
-          padding: '12px 24px',
-          borderRadius: '8px',
-          fontWeight: 'bold',
-          fontSize: '18px',
-          zIndex: 10,
-          boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
-        }}>
-          {directionMessage}
-        </div>
-      )}
-
-      {isNavigating && (
-        <div style={{
-          position: 'absolute',
-          top: 10,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          backgroundColor: 'white',
-          borderRadius: '12px',
-          padding: '4px',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-          width: '200px',
-          zIndex: 10
-        }}>
-          <div style={{
-            height: '8px',
-            backgroundColor: '#f0f0f0',
-            borderRadius: '4px',
-            overflow: 'hidden'
-          }}>
-            <div style={{
-              height: '100%',
-              width: `${(navigationIndex / (points.length - 1)) * 100}%`,
-              backgroundColor: '#007AFF',
-              borderRadius: '4px',
-              transition: 'width 0.5s ease-in-out'
-            }} />
-          </div>
-          <div style={{
-            textAlign: 'center',
-            fontSize: '12px',
-            marginTop: '4px',
-            color: '#333'
-          }}>
-            {`${navigationIndex} de ${points.length - 1} pontos`}
-          </div>
-        </div>
-      )}
-
-      {showArrival && (
-        <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          backgroundColor: 'rgba(52, 199, 89, 0.9)',
-          color: 'white',
-          padding: '20px 40px',
-          borderRadius: '16px',
-          fontSize: '20px',
-          fontWeight: 'bold',
-          zIndex: 100,
-          animation: 'fadeInOut 1.5s forwards'
-        }}>
-          <style>
-            {`
-              @keyframes fadeInOut {
-                0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-                30% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
-                70% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-                100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-              }
-            `}
-          </style>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" fill="white" />
-            </svg>
-            Chegou ao ponto!
-          </div>
-        </div>
-      )}
-
-      {/* Botões de Navegação */}
-      <div style={{ position: 'absolute', bottom: 20, right: 20, zIndex: 10 }}>
-        {!isNavigating ? (
-          <button
-            onClick={startNavigation}
-            style={{
-              backgroundColor: '#007AFF',
-              color: 'white',
-              padding: '10px 20px',
-              borderRadius: '4px',
-              border: 'none',
-              cursor: 'pointer'
-            }}
-            disabled={!route}
-          >
-            Iniciar Navegação
-          </button>
-        ) : (
-          <button
-            onClick={stopNavigation}
-            style={{
-              backgroundColor: '#FF3B30',
-              color: 'white',
-              padding: '10px 20px',
-              borderRadius: '4px',
-              border: 'none',
-              cursor: 'pointer'
-            }}
-          >
-            Parar Navegação
-          </button>
-        )}
-      </div>
-
       <div className={styles.mapWrapper}>
         <Map
           mapboxAccessToken={MAPBOX_TOKEN}
@@ -726,7 +468,6 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
             mapRef.current = evt.target;
           }}
         >
-          {/* Renderiza apenas os pontos que ainda não foram visitados durante a navegação */}
           {points.map((p, idx) => (
             (!isNavigating || idx >= navigationIndex) && (
               <Marker
@@ -761,16 +502,15 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
             </Source>
           )}
 
-          {/* Add the user path route */}
           {isNavigating && userPathRoute && (
             <Source id="user-path" type="geojson" data={userPathRoute}>
               <Layer
                 id="user-path-layer"
                 type="line"
                 paint={{
-                  'line-color': '#34C759', // Green color for user's path
+                  'line-color': '#34C759',
                   'line-width': 5,
-                  'line-dasharray': [2, 1], // Dashed line for user path
+                  'line-dasharray': [2, 1],
                 }}
               />
             </Source>
@@ -782,14 +522,7 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
               latitude={userLocation[1]}
               anchor="center"
             >
-              <div style={{
-                width: '20px',
-                height: '20px',
-                borderRadius: '50%',
-                backgroundColor: '#007AFF',
-                border: '3px solid white',
-                boxShadow: '0 0 5px rgba(0,0,0,0.5)'
-              }} />
+              <div className={styles.userLocationMarker} />
             </Marker>
           )}
 
@@ -799,17 +532,119 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
               latitude={viewState.latitude}
               anchor="center"
             >
-              <div style={{
-                width: '20px',
-                height: '20px',
-                borderRadius: '50%',
-                backgroundColor: '#007AFF',
-                border: '3px solid white',
-                boxShadow: '0 0 5px rgba(0,0,0,0.5)'
-              }} />
+              <div className={styles.userLocationMarker} />
             </Marker>
           )}
         </Map>
+
+        {/* Sobreposições - Colocadas dentro do wrapper para posicionamento absoluto correto */}
+        <div className={styles.searchContainer}>
+          <input
+            type="text"
+            value={searchText}
+            onChange={handleSearchChange}
+            placeholder="Digite um endereço..."
+            className={styles.searchInput}
+          />
+          {suggestions.length > 0 && (
+            <ul className={styles.suggestionsList}>
+              {suggestions.map((s, idx) => (
+                <li
+                  key={idx}
+                  onClick={() => handleSelectSuggestion(s)}
+                  className={styles.suggestionItem}
+                >
+                  {s.place_name}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <button
+          onClick={centerOnUser}
+          className={styles.locationButton}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="4" stroke="white" strokeWidth="2" />
+            <path d="M12 2V4" stroke="white" strokeWidth="2" strokeLinecap="round" />
+            <path d="M12 20V22" stroke="white" strokeWidth="2" strokeLinecap="round" />
+            <path d="M2 12H4" stroke="white" strokeWidth="2" strokeLinecap="round" />
+            <path d="M20 12H22" stroke="white" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+        </button>
+
+        {isNavigating && (
+          <button
+            onClick={returnToUserLocation}
+            className={styles.returnButton}
+            title="Voltar à sua localização na navegação"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="4" stroke="white" strokeWidth="2" />
+              <path d="M12 2L12 8" stroke="white" strokeWidth="2" strokeLinecap="round" />
+              <path d="M12 16L12 22" stroke="white" strokeWidth="2" strokeLinecap="round" />
+              <path d="M2 12L8 12" stroke="white" strokeWidth="2" strokeLinecap="round" />
+              <path d="M16 12L22 12" stroke="white" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </button>
+        )}
+
+        {locationError && (
+          <div className={styles.errorMessage}>
+            {locationError}
+          </div>
+        )}
+
+        {isNavigating && (
+          <div className={styles.directionMessage}>
+            {directionMessage}
+          </div>
+        )}
+
+        {isNavigating && (
+          <div className={styles.progressContainer}>
+            <div className={styles.progressBar}>
+              <div 
+                className={styles.progressFill} 
+                style={{ width: `${(navigationIndex / (points.length - 1)) * 100}%` }}
+              />
+            </div>
+            <div className={styles.progressText}>
+              {`${navigationIndex} de ${points.length - 1} pontos`}
+            </div>
+          </div>
+        )}
+
+        {showArrival && (
+          <div className={styles.arrivalNotification}>
+            <div className={styles.arrivalContent}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" fill="white" />
+              </svg>
+              Chegou ao ponto!
+            </div>
+          </div>
+        )}
+
+        <div className={styles.navigationControls}>
+          {!isNavigating ? (
+            <button
+              onClick={startNavigation}
+              className={styles.startButton}
+              disabled={!route}
+            >
+              Iniciar Navegação
+            </button>
+          ) : (
+            <button
+              onClick={stopNavigation}
+              className={styles.stopButton}
+            >
+              Parar Navegação
+            </button>
+          )}
+        </div>
       </div>
     </>
   );
