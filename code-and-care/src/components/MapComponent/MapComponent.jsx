@@ -37,10 +37,26 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
   const [directionMessage, setDirectionMessage] = useState(DIRECTION_MESSAGES.STRAIGHT);
   const [showArrival, setShowArrival] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [userPathRoute, setUserPathRoute] = useState(null); // Add this state for the user path
 
   const navigationTimer = useRef(null);
   const locationWatchId = useRef(null);
   const mapRef = useRef(null);
+
+  // Add this function to calculate a route from user to next point
+  const calculateUserToPointRoute = async (userLocation, nextPoint) => {
+    if (!userLocation || !nextPoint) return;
+    
+    try {
+      const routeData = await getRouteFromPoints([
+        userLocation,
+        nextPoint
+      ]);
+      setUserPathRoute(routeData.geojson);
+    } catch (error) {
+      console.error('Erro ao calcular rota do usuário:', error);
+    }
+  };
 
   const getUserLocation = () => {
     if (!navigator.geolocation) {
@@ -59,7 +75,10 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
         const { longitude, latitude } = position.coords;
         setUserLocation([longitude, latitude]);
 
-        if (isNavigating) {
+        if (isNavigating && navigationIndex < points.length) {
+          // Calculate path to next point when user location updates
+          calculateUserToPointRoute([longitude, latitude], points[navigationIndex]);
+          
           let bearing = 0;
           if (navigationIndex < points.length - 1) {
             const nextPoint = points[navigationIndex + 1];
@@ -189,6 +208,10 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
 
     getUserLocation();
 
+    // Calculate initial path if user location is available
+    if (userLocation && points.length > 0) {
+      calculateUserToPointRoute(userLocation, points[0]);
+    }
 
     if (!userLocation) {
       const startPoint = points[0];
@@ -286,6 +309,7 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
       navigationTimer.current = null;
     }
 
+    setUserPathRoute(null);
     setIsNavigating(false);
 
     setViewState({
@@ -677,6 +701,21 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
                 paint={{
                   'line-color': '#3b9ddd',
                   'line-width': 4,
+                }}
+              />
+            </Source>
+          )}
+
+          {/* Add the user path route */}
+          {isNavigating && userPathRoute && (
+            <Source id="user-path" type="geojson" data={userPathRoute}>
+              <Layer
+                id="user-path-layer"
+                type="line"
+                paint={{
+                  'line-color': '#34C759', // Green color for user's path
+                  'line-width': 5,
+                  'line-dasharray': [2, 1], // Dashed line for user path
                 }}
               />
             </Source>

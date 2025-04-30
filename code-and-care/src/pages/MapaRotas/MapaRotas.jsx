@@ -39,6 +39,22 @@ function MapaRotas() {
   ]);
   const [routeInfo, setRouteInfo] = useState(null);
 
+  // Add this function to handle address removal
+  const handleRemoveAddress = (index) => {
+    // Create new arrays without the removed point
+    const newPoints = points.filter((_, idx) => idx !== index);
+    setPoints(newPoints);
+    
+    // Also remove the address from the addresses list
+    const newAddresses = addresses.filter((_, idx) => idx !== index);
+    setAddresses(newAddresses);
+    
+    // If we remove all points, clear the route
+    if (newPoints.length < 2) {
+      setRouteInfo(null);
+    }
+  };
+
   return (
     <div>
       <Topbar />
@@ -87,7 +103,37 @@ function MapaRotas() {
             <div className={style.container_colum_enderecos}>
               {addresses.map((address, idx) => (
                 <div key={idx} className={style.container_enderecos}>
-                  {address}
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    width: '100%'
+                  }}>
+                    <div>{address}</div>
+                    <button
+                      onClick={() => handleRemoveAddress(idx)}
+                      style={{
+                        backgroundColor: '#FF3B30',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '50%',
+                        width: '22px',
+                        height: '22px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        fontSize: '12px',
+                        fontWeight: 'bold',
+                        padding: 0,
+                        marginLeft: '8px',
+                        flexShrink: 0
+                      }}
+                      title="Remover endereço"
+                    >
+                      ×
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
