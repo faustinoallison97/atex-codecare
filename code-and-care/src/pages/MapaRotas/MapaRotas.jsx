@@ -2,19 +2,21 @@ import React, { useEffect, useState } from "react";
 import style from "./MapaRotas.module.css";
 import Topbar from "../../components/Topbar/Topbar";
 import MapComponent from "../../components/MapComponent/MapComponent";
-import { optimizeRouteWithIndices } from '../../services/routeOptimizer';
+import { optimizeRouteWithIndices } from "../../services/routeOptimizer";
+import { FiLayers } from "react-icons/fi";
+import { MdClose } from "react-icons/md";
 
 function MapaRotas() {
   const [points, setPoints] = useState([
     // [-45.948898, -21.445104], // Av. José Paulino da Costa, 950 – Centro
     [-45.9475, -21.4256], // Rua Gabriela da Costa Santos, 379 – Bairro Pinheirinho
-    [-45.9500, -21.4200], // Rua Juscelino Barbosa, 1438 – Centro
-    [-45.9520, -21.4210], // Rua Benjamim Contant, 432 – Centro
-    [-45.9550, -21.4230], // Rua Fany Enguel, 137 – Campos Elísios
-    [-45.9600, -21.4280], // Rua Barão de Alfenas, 1637 – Residencial Itaparica
-    [-45.9610, -21.4290], // Rua Barão de Alfenas, 204 – Residencial Itaparica
-    [-45.9650, -21.4300], // Rua Onofre Gomes Pereira, 400 Bloco 1 - AP 24 – Recreio Vale do Sol
-    [-45.9700, -21.4350], // Rua Cafezinho, 297 – Recreio
+    [-45.95, -21.42], // Rua Juscelino Barbosa, 1438 – Centro
+    [-45.952, -21.421], // Rua Benjamim Contant, 432 – Centro
+    [-45.955, -21.423], // Rua Fany Enguel, 137 – Campos Elísios
+    [-45.96, -21.428], // Rua Barão de Alfenas, 1637 – Residencial Itaparica
+    [-45.961, -21.429], // Rua Barão de Alfenas, 204 – Residencial Itaparica
+    [-45.965, -21.43], // Rua Onofre Gomes Pereira, 400 Bloco 1 - AP 24 – Recreio Vale do Sol
+    [-45.97, -21.435], // Rua Cafezinho, 297 – Recreio
     [-45.9398, -21.4055], // Rua Elízio Ayer, 679 – Campos Elísios
     [-45.9391, -21.4042], // Rua Elízio Ayer, 413 – Campos Elísios
     [-45.9391, -21.4042], // Rua Elízio Ayer, 470 – Campos Elísios
@@ -40,67 +42,54 @@ function MapaRotas() {
   ]);
   const [routeInfo, setRouteInfo] = useState(null);
 
-  // Modificar a função de remoção de endereço para garantir sincronização
   const handleRemoveAddress = (index) => {
-    // Create new arrays without the removed point
     const newPoints = points.filter((_, idx) => idx !== index);
     setPoints(newPoints);
-    
-    // Also remove the address from the addresses list
+
     const newAddresses = addresses.filter((_, idx) => idx !== index);
     setAddresses(newAddresses);
-    
-    // If we remove all points, clear the route
+
     if (newPoints.length < 2) {
       setRouteInfo(null);
     }
-    
-    // Forçar a atualização da rota - podemos fazer isso definindo
-    // um estado temporário que serve apenas para disparar um efeito
-    setForceRouteUpdate(prev => !prev);
+
+    setForceRouteUpdate((prev) => !prev);
   };
-  
-  // Estado auxiliar para forçar a atualização da rota
+
   const [forceRouteUpdate, setForceRouteUpdate] = useState(false);
-  
-  // Efeito para recalcular a rota quando os pontos mudarem
+
   useEffect(() => {
-    // Só recalculamos se houver pelo menos 2 pontos
     if (points.length >= 2) {
-      // Precisamos chamar o mesmo serviço que o MapComponent usa
       const fetchRoute = async () => {
         try {
-          const { getRouteFromPoints } = await import('../../services/mapboxService');
+          const { getRouteFromPoints } = await import(
+            "../../services/mapboxService"
+          );
           const routeData = await getRouteFromPoints(points);
-          
-          // Atualizar a rota diretamente
           setRouteInfo(routeData.info);
         } catch (error) {
-          console.error('Erro ao recalcular rota:', error);
+          console.error("Erro ao recalcular rota:", error);
         }
       };
-      
+
       fetchRoute();
     }
-  }, [points, forceRouteUpdate]); // Depende de points e do estado força-atualização
-  
-  // Função para otimizar a rota
+  }, [points, forceRouteUpdate]);
+
   const handleOptimizeRoute = () => {
-    // Só podemos otimizar se tivermos pelo menos 3 pontos
     if (points.length < 3) return;
 
-    // Usar 0 como índice inicial (começar pelo primeiro ponto)
-    const { points: optimizedPoints, indices: optimizedIndices } = optimizeRouteWithIndices(points, 0);
-    
-    // Atualizar pontos com a rota otimizada
+    const { points: optimizedPoints, indices: optimizedIndices } =
+      optimizeRouteWithIndices(points, 0);
+
     setPoints(optimizedPoints);
-    
-    // Reorganizar endereços de acordo com a nova ordem dos pontos
-    const optimizedAddresses = optimizedIndices.map(index => addresses[index]);
+
+    const optimizedAddresses = optimizedIndices.map(
+      (index) => addresses[index]
+    );
     setAddresses(optimizedAddresses);
-    
-    // Forçar atualização da rota
-    setForceRouteUpdate(prev => !prev);
+
+    setForceRouteUpdate((prev) => !prev);
   };
 
   return (
@@ -118,37 +107,16 @@ function MapaRotas() {
 
         <div className={style.container_info_total}>
           <div className={style.container_resumo_total}>
-            <h3 className={style.titulos}>Resumo da rota</h3>
+            <div className={style.container_linha_resumo}>
+              <h3 className={style.titulos}>Resumo da rota</h3>
 
-            {/* Adicionar botão de otimização logo abaixo do título */}
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'flex-end', 
-              marginTop: '-30px',
-              marginBottom: '10px' 
-            }}>
               <button
                 onClick={handleOptimizeRoute}
-                style={{
-                  backgroundColor: '#007AFF',
-                  color: 'white',
-                  padding: '6px 12px',
-                  borderRadius: '4px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '5px',
-                  fontSize: '14px'
-                }}
+                className={style.botao_otimizar_rota}
                 disabled={points.length < 3}
                 title="Otimizar rota (calcular caminho mais curto)"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M2 17L12 22L22 17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M2 12L12 17L22 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                <FiLayers />
                 Otimizar Rota
               </button>
             </div>
@@ -157,19 +125,27 @@ function MapaRotas() {
               <div className={style.container_info_rota}>
                 <div>
                   Tempo Estimado
-                  <div className={style.info}>{routeInfo ? `${(routeInfo.duration / 60).toFixed(1)} min` : "--"}</div>
+                  <div className={style.info}>
+                    {routeInfo
+                      ? `${(routeInfo.duration / 60).toFixed(1)} min`
+                      : "--"}
+                  </div>
                 </div>
               </div>
               <div className={style.container_info_rota}>
                 <div>
                   Distância Total
-                  <div className={style.info}>{routeInfo ? `${(routeInfo.distance / 1000).toFixed(2)} km` : "--"}</div>
+                  <div className={style.info}>
+                    {routeInfo
+                      ? `${(routeInfo.distance / 1000).toFixed(2)} km`
+                      : "--"}
+                  </div>
                 </div>
               </div>
               <div className={style.container_info_rota}>
                 <div>
                   Cestas Básicas
-                  <div className={style.info}>{addresses.length}</div> {/* Número de endereços */}
+                  <div className={style.info}>{addresses.length}</div>
                 </div>
               </div>
             </div>
@@ -184,42 +160,23 @@ function MapaRotas() {
             <div className={style.container_colum_enderecos}>
               {addresses.map((address, idx) => (
                 <div key={idx} className={style.container_enderecos}>
-                  <div style={{ 
-                    display: 'flex', 
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    width: '100%'
-                  }}>
+                  <div
+                   className={style.container_endereco_remover}
+                  >
                     <div>{address}</div>
                     <button
+                    className={style.botao_remover_endereco }
                       onClick={() => handleRemoveAddress(idx)}
-                      style={{
-                        backgroundColor: '#FF3B30',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '50%',
-                        width: '22px',
-                        height: '22px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        cursor: 'pointer',
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        padding: 0,
-                        marginLeft: '8px',
-                        flexShrink: 0
-                      }}
                       title="Remover endereço"
                     >
-                      ×
+                      <MdClose />
                     </button>
                   </div>
                 </div>
               ))}
             </div>
 
-            <button className={style.botao_entrega}>Em entrega...</button>
+            
           </div>
         </div>
       </div>

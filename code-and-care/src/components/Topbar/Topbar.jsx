@@ -12,20 +12,23 @@ function Topbar() {
     navigate("/");
     setMenuAberto(false);
   }
+
   function navegarMapaRotas() {
     navigate("/mapa-rotas");
     setMenuAberto(false);
   }
-  function navegarSessao2() {
-    window.location.href = "/#sessao2";
-    setMenuAberto(false);
-  }
-  function navegarSessao3() {
-    window.location.href = "/#sessao3";
-    setMenuAberto(false);
-  }
-  function navegarSessao4() {
-    window.location.href = "/#sessao4";
+
+  function navegarParaSecao(hash) {
+    // Navega para a página inicial primeiro se necessário
+    if (window.location.pathname !== "/") {
+      navigate("/", { state: { scrollTo: hash } });
+    } else {
+      // Se já estiver na home, apenas rola para a seção
+      const elemento = document.querySelector(hash);
+      if (elemento) {
+        elemento.scrollIntoView({ behavior: "smooth" });
+      }
+    }
     setMenuAberto(false);
   }
 
@@ -35,9 +38,9 @@ function Topbar() {
         <img onClick={navegarHome} src={logo} alt="Logo" />
         <ul className={style.menuDesktop}>
           <li onClick={navegarMapaRotas}>Rotas</li>
-          <li onClick={navegarSessao2}>Sobre o Projeto</li>
-          <li onClick={navegarSessao3}>Como Funciona</li>
-          <li onClick={navegarSessao4}>Contato</li>
+          <li onClick={() => navegarParaSecao("#sessao2")}>Sobre o Projeto</li>
+          <li onClick={() => navegarParaSecao("#sessao3")}>Como Funciona</li>
+          <li onClick={() => navegarParaSecao("#sessao4")}>Contato</li>
         </ul>
         <button
           className={style.menuToggle}
@@ -51,9 +54,9 @@ function Topbar() {
         <div className={style.menuMobile}>
           <ul>
             <li onClick={navegarMapaRotas}>Rotas</li>
-            <li onClick={navegarSessao2}>Sobre o Projeto</li>
-            <li onClick={navegarSessao3}>Como Funciona</li>
-            <li onClick={navegarSessao4}>Contato</li>
+            <li onClick={() => navegarParaSecao("#sessao2")}>Sobre o Projeto</li>
+            <li onClick={() => navegarParaSecao("#sessao3")}>Como Funciona</li>
+            <li onClick={() => navegarParaSecao("#sessao4")}>Contato</li>
           </ul>
         </div>
       )}

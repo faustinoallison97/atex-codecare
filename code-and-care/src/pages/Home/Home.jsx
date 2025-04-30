@@ -3,12 +3,12 @@ import ImgSegundaTela from "../../assets/img-tela-2.avif";
 import { FiMapPin } from "react-icons/fi";
 import { LuUsers } from "react-icons/lu";
 import { FaRegHeart } from "react-icons/fa6";
-import { MdOutlineArrowRightAlt } from "react-icons/md";
 import Topbar from "../../components/Topbar/Topbar";
 import { useNavigate } from "react-router";
 import { useState, useEffect } from "react";
 import { AiOutlineArrowUp } from "react-icons/ai";
 import { enviarEmailInteressado } from '../../services/brevo';
+import { useLocation } from "react-router";
 
 function Home() {
   const navigate = useNavigate();
@@ -16,6 +16,17 @@ function Home() {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [mensagem, setMensagem] = useState('');
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.scrollTo) {
+      const elemento = document.querySelector(location.state.scrollTo);
+      if (elemento) {
+        elemento.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [location.state]);
 
   function navegarMapaRotas() {
     navigate("/mapa-rotas");
