@@ -1,78 +1,147 @@
 .containernav {
-    background-color: #007AFF;
+    background-color: #007aff;
     align-items: center;
     color: white;
     height: 75px;
     display: flex;
-    justify-content: center;
-    cursor: default;
-}
-*{
-    -webkit-touch-callout: none;
-   -webkit-user-select: none;
-   -khtml-user-select: none;
-   -moz-user-select: none;
-   -ms-user-select: none;
-   user-select: none;
+    justify-content: space-around;
+    padding: 0 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.4s ease, box-shadow 0.4s ease;
+    position: relative;
+    z-index: 10;
+    will-change: transform, opacity;
+  }
+  
+
+nav img {
+  width: 190px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
 }
 
-nav ul{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    list-style: none;
-    gap: 70px;
+nav img:hover {
+  transform: scale(1.03);
 }
 
-nav img{
-    width: 175px;
-    margin-right: 15em;
-    cursor: pointer;
+.menuDesktop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  list-style: none;
+  gap: 70px;
 }
 
-nav ul li{
-    transition: all ease-in-out 0.3s;
+.menuDesktop li {
+  transition: all ease-in-out 0.3s;
+  cursor: pointer;
+  position: relative;
 }
 
-nav ul li:hover{
-    font-size: 1.07rem;
-    transition: all ease-in-out 0.3s;
-    cursor: pointer;
-    color: #ededed;
+.menuDesktop li:hover {
+  font-size: 1.07rem;
+  color: #ededed;
 }
 
-@media (max-width: 1024px) {
-    nav img {
-        width: 150px;
-        margin-right: 8em;
-    }
-    nav ul {
-        gap: 50px;
-    }
+.menuDesktop li::after {
+  content: "";
+  position: absolute;
+  height: 2px;
+  width: 0%;
+  bottom: -4px;
+  left: 0;
+  background-color: #ededed;
+  transition: width 0.3s ease;
 }
 
-@media (max-width: 768px) {
-    nav img {
-        width: 120px;
-        margin-right: 2em;
-    }
-    nav ul {
-        gap: 30px;
-    }
+.menuDesktop li:hover::after {
+  width: 100%;
 }
 
-@media (max-width: 480px) {
-    .containernav {
-        flex-direction: column;
-        height: auto;
-        padding: 10px 0;
-    }
-    nav img {
-        margin: 0;
-        margin-bottom: 10px;
-    }
-    nav ul {
-        flex-direction: column;
-        gap: 20px;
-    }
+.menuToggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.menuToggle:hover {
+  transform: scale(1.1);
+}
+
+/* Estilo do menu mobile (fora da topbar) */
+.menuMobile {
+  background-color: #007aff;
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+  animation: fadeIn 0.3s ease-in-out;
+  
+}
+
+.menuMobile ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.menuMobile li {
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.menuMobile li:hover {
+  color: #ededed;
+  font-size: 1.05rem;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsividade */
+@media (max-width: 900px) {
+  .menuDesktop {
+    display: none;
+  }
+
+  .menuToggle {
+    display: block;
+  }
+
+  nav img {
+    width: 170px;
+  }
+
+  .containernav {
+    justify-content: space-between;
+  }
+
+  .menuMobile ul {
+    padding: 0;
+    color: white;
+  }
 }
