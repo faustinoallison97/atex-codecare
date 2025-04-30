@@ -76,7 +76,7 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
         setUserLocation([longitude, latitude]);
 
         if (isNavigating && navigationIndex < points.length) {
-          // Calculate path to next point when user location updates
+          // CORREÇÃO: Calcular caminho para o ponto atual
           calculateUserToPointRoute([longitude, latitude], points[navigationIndex]);
           
           let bearing = 0;
@@ -111,10 +111,54 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
                 setShowArrival(false);
               }, 1500);
 
+              // Incrementa o índice de navegação
               setNavigationIndex(prev => prev + 1);
-
-              if (navigationIndex === points.length - 2) {
-                setDirectionMessage(DIRECTION_MESSAGES.ARRIVE);
+              
+              // NOVA FUNCIONALIDADE: Remover o ponto que acabamos de chegar
+              if (navigationIndex < points.length) {
+                // Criamos cópias para não modificar diretamente os estados
+                const newPoints = [...points];
+                
+                // Removemos o ponto atual (que acabamos de chegar)
+                newPoints.splice(navigationIndex, 1);
+                
+                // Atualizamos os pontos
+                setPoints(newPoints);
+                
+                // Atualizamos os endereços correspondentes
+                setAddresses(prevAddresses => {
+                  const newAddresses = [...prevAddresses];
+                  newAddresses.splice(navigationIndex, 1);
+                  return newAddresses;
+                });
+                
+                // Corrigimos o índice de navegação
+                setNavigationIndex(prev => prev - 1);
+                
+                // CORREÇÃO: Recalcular imediatamente a rota do usuário para o próximo ponto
+                // após remover o ponto atual
+                if (newPoints.length > 0) {
+                  calculateUserToPointRoute([longitude, latitude], newPoints[Math.min(navigationIndex, newPoints.length - 1)]);
+                } else {
+                  // Se não houver mais pontos, limpar a rota do usuário
+                  setUserPathRoute(null);
+                }
+                
+                // Recalcular a rota principal com os pontos restantes
+                if (newPoints.length >= 2) {
+                  getRouteFromPoints(newPoints)
+                    .then(routeData => {
+                      setRoute(routeData.geojson);
+                      setRouteInfo(routeData.info);
+                    })
+                    .catch(error => {
+                      console.error('Erro ao recalcular rota:', error);
+                    });
+                } else if (newPoints.length < 2) {
+                  // Limpar a rota se não tiver pontos suficientes
+                  setRoute(null);
+                  setRouteInfo(null);
+                }
               }
             }
           }
@@ -184,21 +228,32 @@ const MapComponent = ({ points, setPoints, setRouteInfo, setAddresses }) => {
     setSuggestions([]);
   };
 
+  // Efeito para recalcular a rota quando os pontos mudam externamente
   useEffect(() => {
     const fetchRoute = async () => {
-      try {
-        const routeData = await getRouteFromPoints(points);
-        setRoute(routeData.geojson);
-        setRouteInfo(routeData.info);
-      } catch (error) {
-        console.error(error);
+      if (points.length >= 2) {
+        try {
+          const routeData = await getRouteFromPoints(points);
+          setRoute(routeData.geojson);
+          setRouteInfo(routeData.info);
+          
+          // Se estiver navegando, recalcular a rota do usuário para o próximo ponto
+          if (isNavigating && userLocation && navigationIndex < points.length) {
+            calculateUserToPointRoute(userLocation, points[navigationIndex]);
+          }
+        } catch (error) {
+          console.error('Erro ao calcular rota:', error);
+        }
+      } else {
+        // Se não houver pontos suficientes, limpar a rota
+        setRoute(null);
+        setRouteInfo(null);
+        setUserPathRoute(null);
       }
     };
-
-    if (points.length >= 2) {
-      fetchRoute();
-    }
-  }, [points, setRouteInfo]);
+    
+    fetchRoute();
+  }, [points]); // Dependência apenas em points para atualizar quando os pontos mudam
 
   const startNavigation = () => {
     if (!route || points.length < 2) return;

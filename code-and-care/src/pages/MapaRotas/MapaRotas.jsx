@@ -39,7 +39,7 @@ function MapaRotas() {
   ]);
   const [routeInfo, setRouteInfo] = useState(null);
 
-  // Add this function to handle address removal
+  // Modificar a função de remoção de endereço para garantir sincronização
   const handleRemoveAddress = (index) => {
     // Create new arrays without the removed point
     const newPoints = points.filter((_, idx) => idx !== index);
@@ -53,8 +53,36 @@ function MapaRotas() {
     if (newPoints.length < 2) {
       setRouteInfo(null);
     }
+    
+    // Forçar a atualização da rota - podemos fazer isso definindo
+    // um estado temporário que serve apenas para disparar um efeito
+    setForceRouteUpdate(prev => !prev);
   };
-
+  
+  // Estado auxiliar para forçar a atualização da rota
+  const [forceRouteUpdate, setForceRouteUpdate] = useState(false);
+  
+  // Efeito para recalcular a rota quando os pontos mudarem
+  useEffect(() => {
+    // Só recalculamos se houver pelo menos 2 pontos
+    if (points.length >= 2) {
+      // Precisamos chamar o mesmo serviço que o MapComponent usa
+      const fetchRoute = async () => {
+        try {
+          const { getRouteFromPoints } = await import('../../services/mapboxService');
+          const routeData = await getRouteFromPoints(points);
+          
+          // Atualizar a rota diretamente
+          setRouteInfo(routeData.info);
+        } catch (error) {
+          console.error('Erro ao recalcular rota:', error);
+        }
+      };
+      
+      fetchRoute();
+    }
+  }, [points, forceRouteUpdate]); // Depende de points e do estado força-atualização
+  
   return (
     <div>
       <Topbar />
