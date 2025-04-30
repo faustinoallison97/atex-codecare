@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import style from "./MapaRotas.module.css";
 import Topbar from "../../components/Topbar/Topbar";
 import MapComponent from "../../components/MapComponent/MapComponent";
+import { optimizeRouteWithIndices } from '../../services/routeOptimizer';
 
 function MapaRotas() {
   const [points, setPoints] = useState([
@@ -39,6 +40,69 @@ function MapaRotas() {
   ]);
   const [routeInfo, setRouteInfo] = useState(null);
 
+  // Modificar a função de remoção de endereço para garantir sincronização
+  const handleRemoveAddress = (index) => {
+    // Create new arrays without the removed point
+    const newPoints = points.filter((_, idx) => idx !== index);
+    setPoints(newPoints);
+    
+    // Also remove the address from the addresses list
+    const newAddresses = addresses.filter((_, idx) => idx !== index);
+    setAddresses(newAddresses);
+    
+    // If we remove all points, clear the route
+    if (newPoints.length < 2) {
+      setRouteInfo(null);
+    }
+    
+    // Forçar a atualização da rota - podemos fazer isso definindo
+    // um estado temporário que serve apenas para disparar um efeito
+    setForceRouteUpdate(prev => !prev);
+  };
+  
+  // Estado auxiliar para forçar a atualização da rota
+  const [forceRouteUpdate, setForceRouteUpdate] = useState(false);
+  
+  // Efeito para recalcular a rota quando os pontos mudarem
+  useEffect(() => {
+    // Só recalculamos se houver pelo menos 2 pontos
+    if (points.length >= 2) {
+      // Precisamos chamar o mesmo serviço que o MapComponent usa
+      const fetchRoute = async () => {
+        try {
+          const { getRouteFromPoints } = await import('../../services/mapboxService');
+          const routeData = await getRouteFromPoints(points);
+          
+          // Atualizar a rota diretamente
+          setRouteInfo(routeData.info);
+        } catch (error) {
+          console.error('Erro ao recalcular rota:', error);
+        }
+      };
+      
+      fetchRoute();
+    }
+  }, [points, forceRouteUpdate]); // Depende de points e do estado força-atualização
+  
+  // Função para otimizar a rota
+  const handleOptimizeRoute = () => {
+    // Só podemos otimizar se tivermos pelo menos 3 pontos
+    if (points.length < 3) return;
+
+    // Usar 0 como índice inicial (começar pelo primeiro ponto)
+    const { points: optimizedPoints, indices: optimizedIndices } = optimizeRouteWithIndices(points, 0);
+    
+    // Atualizar pontos com a rota otimizada
+    setPoints(optimizedPoints);
+    
+    // Reorganizar endereços de acordo com a nova ordem dos pontos
+    const optimizedAddresses = optimizedIndices.map(index => addresses[index]);
+    setAddresses(optimizedAddresses);
+    
+    // Forçar atualização da rota
+    setForceRouteUpdate(prev => !prev);
+  };
+
   return (
     <div>
       <Topbar />
@@ -55,6 +119,39 @@ function MapaRotas() {
         <div className={style.container_info_total}>
           <div className={style.container_resumo_total}>
             <h3 className={style.titulos}>Resumo da rota</h3>
+
+            {/* Adicionar botão de otimização logo abaixo do título */}
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'flex-end', 
+              marginTop: '-30px',
+              marginBottom: '10px' 
+            }}>
+              <button
+                onClick={handleOptimizeRoute}
+                style={{
+                  backgroundColor: '#007AFF',
+                  color: 'white',
+                  padding: '6px 12px',
+                  borderRadius: '4px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  fontSize: '14px'
+                }}
+                disabled={points.length < 3}
+                title="Otimizar rota (calcular caminho mais curto)"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M2 17L12 22L22 17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M2 12L12 17L22 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Otimizar Rota
+              </button>
+            </div>
 
             <div className={style.container_linha_info_rota}>
               <div className={style.container_info_rota}>
@@ -87,7 +184,37 @@ function MapaRotas() {
             <div className={style.container_colum_enderecos}>
               {addresses.map((address, idx) => (
                 <div key={idx} className={style.container_enderecos}>
-                  {address}
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    width: '100%'
+                  }}>
+                    <div>{address}</div>
+                    <button
+                      onClick={() => handleRemoveAddress(idx)}
+                      style={{
+                        backgroundColor: '#FF3B30',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '50%',
+                        width: '22px',
+                        height: '22px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        fontSize: '12px',
+                        fontWeight: 'bold',
+                        padding: 0,
+                        marginLeft: '8px',
+                        flexShrink: 0
+                      }}
+                      title="Remover endereço"
+                    >
+                      ×
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>

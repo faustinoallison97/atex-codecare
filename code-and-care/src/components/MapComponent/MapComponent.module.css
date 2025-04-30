@@ -42,3 +42,207 @@
   height: 100%;
   overflow: hidden;
 }
+
+/* Search input and suggestions */
+.searchContainer {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+}
+
+.searchInput {
+  padding: 8px;
+  width: 300px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.suggestionsList {
+  background-color: #fff;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #ccc;
+}
+
+.suggestionItem {
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.suggestionItem:hover {
+  background-color: #f0f0f0;
+}
+
+/* User location button */
+.locationButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  background-color: #007AFF;
+  color: white;
+  padding: 8px;
+  border-radius: 50%;
+  border: none;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Return to user location button */
+.returnButton {
+  position: absolute;
+  top: 60px;
+  right: 10px;
+  z-index: 10;
+  background-color: #34C759;
+  color: white;
+  padding: 8px;
+  border-radius: 50%;
+  border: none;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Location error message */
+.errorMessage {
+  position: absolute;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #FF3B30;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  z-index: 10;
+}
+
+/* Direction message */
+.directionMessage {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 122, 255, 0.9);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 18px;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Progress bar container */
+.progressContainer {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: white;
+  border-radius: 12px;
+  padding: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  width: 200px;
+  z-index: 10;
+}
+
+.progressBar {
+  height: 8px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background-color: #007AFF;
+  border-radius: 4px;
+  transition: width 0.5s ease-in-out;
+}
+
+.progressText {
+  text-align: center;
+  font-size: 12px;
+  margin-top: 4px;
+  color: #333;
+}
+
+/* Arrival notification */
+.arrivalNotification {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(52, 199, 89, 0.9);
+  color: white;
+  padding: 20px 40px;
+  border-radius: 16px;
+  font-size: 20px;
+  font-weight: bold;
+  z-index: 100;
+  animation: fadeInOut 1.5s forwards;
+}
+
+.arrivalContent {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+  30% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  70% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+}
+
+/* Navigation controls */
+.navigationControls {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: 10;
+}
+
+.startButton {
+  background-color: #007AFF;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+.startButton:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.stopButton {
+  background-color: #FF3B30;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+/* User location marker */
+.userLocationMarker {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #007AFF;
+  border: 3px solid white;
+  box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
