@@ -1,6 +1,6 @@
 export async function enviarEmailInteressado(nome, email, mensagem) {
     // substitui pela sua API key
-    const apiKey = 'Api Key';
+    const apiKey = import.meta.env.VITE_BREVO_API_KEY;
 
     const payload = {
         sender: {
